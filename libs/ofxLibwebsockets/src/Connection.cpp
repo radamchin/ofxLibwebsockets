@@ -33,14 +33,21 @@ namespace ofxLibwebsockets {
         free(binaryBuf);
         
         // delete all pending frames
+		binMutex.lock();
         messages_binary.clear();
+		binMutex.unlock();
+
         messages_text.clear();
     }
     //--------------------------------------------------------------
     void Connection::close() {
         // delete all pending frames
+		binMutex.lock();
         messages_binary.clear();
+		binMutex.unlock();
+
         messages_text.clear();
+
         if (reactor != NULL){
             reactor->close(this);
         }
@@ -108,7 +115,10 @@ namespace ofxLibwebsockets {
         bp.data = (unsigned char*)calloc(size, sizeof(unsigned char));
         memcpy(bp.data, data, size);
         
+		binMutex.lock();
         messages_binary.push_back(bp);
+		binMutex.unlock();
+
     }
     
     //--------------------------------------------------------------
@@ -157,6 +167,7 @@ namespace ofxLibwebsockets {
         }
         
         // process binary messages
+		binMutex.lock();
         if ( messages_binary.size() > 0 && idle ){
             if ( messages_binary.size() > 0 ){
                 BinaryPacket & packet = messages_binary[0];
@@ -193,6 +204,7 @@ namespace ofxLibwebsockets {
         } else if ( messages_binary.size() > 0 && messages_binary[0].index ){
             libwebsocket_callback_on_writable(context, ws);
         }
+		binMutex.unlock();
     }
     //--------------------------------------------------------------
     void Connection::setIdle( bool isIdle ){

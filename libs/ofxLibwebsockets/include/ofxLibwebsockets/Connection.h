@@ -79,7 +79,7 @@ namespace ofxLibwebsockets {
         std::string client_name;
         
         bool binary;            // is this connection sending / receiving binary?
-        
+		
         int bufferSize;
         unsigned char* buf;
         unsigned char* binaryBuf;
@@ -88,6 +88,8 @@ namespace ofxLibwebsockets {
         // threading stuff
         std::deque<TextPacket> messages_text;
         std::deque<BinaryPacket> messages_binary;
+
+		ofMutex binMutex;
         
         void setIdle( bool isIdle=true );
         
