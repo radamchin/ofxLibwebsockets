@@ -72,6 +72,20 @@ namespace ofxLibwebsockets {
         
         libwebsockets_get_peer_addresses(context, ws, fd, &client_name[0], client_name.size(),
                                          &client_ip[0], client_ip.size());
+
+		// Trim the strings to approriate now they have been filled.
+		int ip_sz = 0;
+		while (client_ip[ip_sz]) {
+			ip_sz++;
+		}
+		client_ip.resize(ip_sz);
+
+		int nm_sz = 0;
+		while (client_name[nm_sz]) {
+			nm_sz++;
+		}
+		client_name.resize(nm_sz);
+
     }
     
     //--------------------------------------------------------------
