@@ -47,7 +47,7 @@ namespace ofxLibwebsockets {
     
     //--------------------------------------------------------------
     Client::~Client(){
-        exit();
+        close();
         ofRemoveListener( ofEvents().update, this, &Client::update);
     }
     
