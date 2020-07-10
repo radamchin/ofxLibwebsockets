@@ -37,7 +37,9 @@ namespace ofxLibwebsockets {
         messages_binary.clear();
 		binMutex.unlock();
 
+		txtMutex.lock();
         messages_text.clear();
+		txtMutex.unlock();
     }
     //--------------------------------------------------------------
     void Connection::close() {
@@ -46,7 +48,9 @@ namespace ofxLibwebsockets {
         messages_binary.clear();
 		binMutex.unlock();
 
-        messages_text.clear();
+		txtMutex.lock();
+		messages_text.clear();
+		txtMutex.unlock();
 
         if (reactor != NULL){
             reactor->close(this);
@@ -99,7 +103,11 @@ namespace ofxLibwebsockets {
         TextPacket tp;
         tp.index = 0;
         tp.message = message;
-        messages_text.push_back(tp);
+
+		txtMutex.lock();
+		messages_text.push_back(tp);
+		txtMutex.unlock();
+       
     }
     
     //--------------------------------------------------------------
@@ -138,6 +146,7 @@ namespace ofxLibwebsockets {
     //--------------------------------------------------------------
     void Connection::update(){
         // process standard ws messages
+		txtMutex.lock();
         if ( messages_text.size() > 0 && idle ){
             // grab first packet
             TextPacket & packet = messages_text[0];
@@ -179,6 +188,7 @@ namespace ofxLibwebsockets {
         } else if ( messages_text.size() > 0 && messages_text[0].index ){
             libwebsocket_callback_on_writable(context, ws);
         }
+		txtMutex.unlock();
         
         // process binary messages
 		binMutex.lock();

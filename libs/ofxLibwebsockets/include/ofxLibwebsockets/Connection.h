@@ -90,6 +90,7 @@ namespace ofxLibwebsockets {
         std::deque<BinaryPacket> messages_binary;
 
 		ofMutex binMutex;
+		ofMutex txtMutex;
         
         void setIdle( bool isIdle=true );
         
